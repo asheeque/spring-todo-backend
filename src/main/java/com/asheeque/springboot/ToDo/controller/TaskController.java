@@ -5,6 +5,8 @@ import com.asheeque.springboot.ToDo.model.User;
 import com.asheeque.springboot.ToDo.service.TaskService;
 import com.asheeque.springboot.ToDo.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -38,4 +40,10 @@ public class TaskController {
         return taskService.getAllTasksByUserId(userId);
     }
 
+
+    @DeleteMapping("/{userId}/tasks/{taskId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Map<String ,String >> deleteTask(@PathVariable Long userId,@PathVariable Long taskId){
+        return taskService.deleteTask(taskId);
+    }
 }
