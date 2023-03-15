@@ -5,6 +5,7 @@ import com.asheeque.springboot.ToDo.model.Task;
 //import com.asheeque.springboot.ToDo.repository.TaskRepository;
 import com.asheeque.springboot.ToDo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,6 +18,14 @@ public class TaskService {
 
     public Task addTask(Task newTask) {
         return taskRepository.save(newTask);
+    }
+
+    public ResponseEntity<Map<String, String>> deleteTask(Long taskId){
+        taskRepository.deleteById(taskId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "deleted");
+
+        return ResponseEntity.ok(response);
     }
 
     public Map<String, Object> getAllTasksByUserId(Long userId) {
