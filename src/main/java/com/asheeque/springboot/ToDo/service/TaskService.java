@@ -1,5 +1,6 @@
 package com.asheeque.springboot.ToDo.service;
 
+import com.asheeque.springboot.ToDo.model.Status;
 import com.asheeque.springboot.ToDo.model.SubTask;
 import com.asheeque.springboot.ToDo.model.Task;
 //import com.asheeque.springboot.ToDo.repository.TaskRepository;
@@ -58,6 +59,11 @@ public class TaskService {
         Map<String, Object> resultMap = new LinkedHashMap<>();
         resultMap.put("tasks", tasksMapList);
         return resultMap;
+    }
+
+
+    public int updateTaskStatus(Long taskId, Status status,Long userId) {
+        return taskRepository.updateTaskStatus(taskId, status,userId);
     }
 
 }
