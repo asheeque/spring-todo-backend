@@ -10,7 +10,7 @@ public interface UserService {
     User createUser(User user);
 
 
-    User registerUser(SignupRequest signupRequest);
+    JwtResponse registerUser(SignupRequest signupRequest);
 
     JwtResponse loginUser(SigninRequest signinRequest);
 

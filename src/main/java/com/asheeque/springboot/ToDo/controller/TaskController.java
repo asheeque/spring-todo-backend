@@ -13,6 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +42,13 @@ public class TaskController {
         User user = userService.getUserById(userId);
 //
         newTask.setUser(user);
+
+
+
         Task savedTask = taskService.addTask(newTask);
         Map<String, Task> response = new HashMap<>();
         System.out.println(savedTask.getId());
+        System.out.println(savedTask.getDue_date());
         response.put("Task", savedTask);
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -48,7 +58,6 @@ public class TaskController {
     public ResponseEntity<?> getAllTasksForUser() {
 
         Long userId = ControllerUtils.getAuthenticatedUserId();
-        System.out.println((userId));
         Map<String,Object> allTasks = taskService.getAllTasksByUserId(userId);
         return  ResponseEntity.status(HttpStatus.OK).body(allTasks);
 
@@ -71,13 +80,42 @@ public class TaskController {
         }
 
         int updatedRows = taskService.updateTaskStatus(taskId, newStatus, userId);
-        Map<String, Integer> response = new HashMap<>();
+        return getMapResponseEntity(updatedRows);
+    }
+
+
+
+    @PutMapping("/tasks/{taskId}")
+    public ResponseEntity<Map<String, Integer>> updateTaskDetails(@PathVariable Long taskId, @RequestBody Map<String, Object> requestBody) {
+        Long userId = ControllerUtils.getAuthenticatedUserId();
+
+        String taskName = (String) requestBody.get("task_name");
+        String dueDateStr = (String)  requestBody.get("due_date");
+        String category = (String) requestBody.get("category");
+        String color = (String) requestBody.get("color");
+        LocalDateTime dueDate;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+            ZonedDateTime dueDateObj = ZonedDateTime.parse(dueDateStr, formatter);
+            dueDate = dueDateObj.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid dueDate format", e);
+        }
+
+
+
+        int updatedRows = taskService.updateTaskDetails(taskId, userId, taskName, dueDate, category, color);
+        return getMapResponseEntity(updatedRows);
+    }
+
+    private ResponseEntity<Map<String, Integer>> getMapResponseEntity(int updatedRows) {
+        Map<String, Integer> responseObj = new HashMap<>();
         if (updatedRows > 0) {
-            response.put("status", 1);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            responseObj.put("status", 1);
+            return new ResponseEntity<>(responseObj, HttpStatus.OK);
         } else {
-            response.put("status", 0);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            responseObj.put("status", 0);
+            return new ResponseEntity<>(responseObj, HttpStatus.NOT_FOUND);
         }
     }
 

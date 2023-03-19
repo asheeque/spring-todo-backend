@@ -9,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -64,6 +70,23 @@ public class TaskService {
 
     public int updateTaskStatus(Long taskId, Status status,Long userId) {
         return taskRepository.updateTaskStatus(taskId, status,userId);
+    }
+
+
+    public int updateTaskDetails(Long taskId, Long userId, String taskName, LocalDateTime dueDate, String category, String color) {
+        // Convert the dueDate string to a LocalDateTime object
+//        ZonedDateTime dueDateObj;
+//        try {
+//            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+//            dueDateObj = ZonedDateTime.parse(dueDate, formatter);
+//        } catch (DateTimeParseException e) {
+//            throw new IllegalArgumentException("Invalid dueDate format", e);
+//        }
+//
+//        // Convert the ZonedDateTime object to a LocalDateTime object
+//        LocalDateTime localDueDateObj = dueDateObj.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+
+        return taskRepository.updateTaskDetails(taskId, userId, taskName, dueDate, category, color);
     }
 
 }

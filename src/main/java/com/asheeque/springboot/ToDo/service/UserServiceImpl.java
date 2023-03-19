@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User registerUser(SignupRequest signupRequest) {
+    public JwtResponse registerUser(SignupRequest signupRequest) {
 
         PasswordEncoder passwordEncoder = passwordConfig.passwordEncoder();
         User newUser = new User(signupRequest.getUsername(), signupRequest.getEmail(), passwordEncoder.encode(signupRequest.getPassword()));
@@ -79,8 +79,22 @@ public class UserServiceImpl implements UserService{
 
         }
         newUser.setRoles(roles);
-        System.out.println(roles);
-        return  userRepository.save(newUser);
+        userRepository.save(newUser);
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(signupRequest.getUsername(), signupRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generate JWT token
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        // Get user roles
+        List<String> userRoles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        // Return JwtResponse
+        return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(), userDetails.getId(), userRoles);
 //        return newUser;
     }
 

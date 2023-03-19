@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -37,14 +38,16 @@ public class UserController {
 
 
     @PostMapping("users/signup")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody SignupRequest signupRequest){
+    public ResponseEntity<JwtResponse> registerUser(@Valid @RequestBody SignupRequest signupRequest){
 
-        User currentUser = userServiceImpl.registerUser((signupRequest));
+        Set n = signupRequest.getRole();
+        for(Object i:n){
+            System.out.println(i);
+        }
+        JwtResponse jwtToken = userServiceImpl.registerUser(signupRequest);
 
-        User response ;
-//        response.put("status", "deleted");
-        response = currentUser;
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(jwtToken);
     }
 
 
