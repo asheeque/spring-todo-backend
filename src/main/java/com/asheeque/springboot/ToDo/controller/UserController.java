@@ -30,6 +30,10 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("health")
+    public ResponseEntity<String> checkHealth() {
+        return ResponseEntity.ok("Application is running");
+    }
 
     @PostMapping("users")
     public User createUser(@RequestBody User user) {
