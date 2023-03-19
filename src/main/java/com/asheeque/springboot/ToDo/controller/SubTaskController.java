@@ -8,8 +8,7 @@ import com.asheeque.springboot.ToDo.service.SubTaskService;
 import com.asheeque.springboot.ToDo.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/subtasks")
+@RequestMapping("/api/")
 public class SubTaskController {
 
     @Autowired
@@ -28,31 +27,36 @@ public class SubTaskController {
     private UserServiceImpl userService;
 
 
-    @PostMapping("/add")
-    public ResponseEntity<Map<String, Objects>> addSubTasks(@RequestBody SubTask subTask) {
+    @PostMapping("subtasks")
+    public ResponseEntity<Map<String, Object>> addSubTasks(@RequestBody SubTask subTask) {
         Long userId = ControllerUtils.getAuthenticatedUserId();
         SubTask savedSubTasks = subTaskService.saveSubTask(subTask);
 
-//        List<Map<String, Object>> response = savedSubTasks.stream().map(subTask -> {
         Map<String, Object> subTaskData = new HashMap<>();
 //            System.out.println(subTask.getId(),subTask.getName());
         subTaskData.put("id", subTask.getId());
         subTaskData.put("subtask_name", subTask.getName());
         subTaskData.put("status", subTask.isStatus());
-//        return subTaskData;
-//        }).collect(Collectors.toList());
 
         return ResponseEntity.ok(subTaskData);
 
     }
 
+    @DeleteMapping("subtasks/{subtaskId}")
+    public ResponseEntity<Map<String,String>> deleteSubtask(@PathVariable Long subtaskId){
+        return subTaskService.deleteSubtask(subtaskId);
+    }
 
-    @PutMapping("/update-status")
-    public ResponseEntity<String> updateSubTaskStatus(@RequestBody UpdateSubTaskStatusRequest updateRequest) {
-        System.out.println(updateRequest.getSubtaskId());
-        System.out.println(updateRequest.isNewStatus());
+
+
+
+    @PutMapping("subtasks/update-status")
+    public ResponseEntity<Map<String,Object>> updateSubTaskStatus(@RequestBody UpdateSubTaskStatusRequest updateRequest) {
+
         SubTask updatedSubTask = subTaskService.updateStatus(updateRequest.getSubtaskId(),updateRequest.isNewStatus());
-        System.out.println(updatedSubTask.getName());
-        return ResponseEntity.ok("updatedSubTask");
+        Map<String, Object> subTaskData = new HashMap<>();
+        subTaskData.put("id", updatedSubTask.getId());
+        subTaskData.put("status", "updated");
+        return ResponseEntity.ok(subTaskData);
     }
 }

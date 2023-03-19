@@ -2,6 +2,7 @@ package com.asheeque.springboot.ToDo.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Task {
     private String task_name;
 
     @Column(name = "due_date", nullable = false)
-    private LocalDate due_date;
+    private LocalDateTime due_date;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
@@ -63,11 +64,11 @@ public class Task {
         this.task_name = name;
     }
 
-    public LocalDate getDue_date() {
+    public LocalDateTime getDue_date() {
         return due_date;
     }
 
-    public void setDue_date(LocalDate due_date) {
+    public void setDue_date(LocalDateTime due_date) {
         this.due_date = due_date;
     }
 
@@ -112,7 +113,7 @@ public class Task {
     }
 
     public  Task(){}
-    public Task(Long id, User user, String name, LocalDate dueDate, Priority priority, String category, Status status, String color, List<SubTask> subTasks) {
+    public Task(Long id, User user, String name, LocalDateTime dueDate, Priority priority, String category, Status status, String color, List<SubTask> subTasks) {
         this.id = id;
         this.user = user;
         this.task_name = name;
